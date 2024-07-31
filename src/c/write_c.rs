@@ -42,7 +42,66 @@ impl<T: WriteString> WriteString for Option<T> {
 
 impl WriteString for Expression {
     fn write_string(&self) -> String {
-        "Expression".to_string()
+        let mut s: String = "=".to_string();
+        let str = match self {
+            Expression::Identifier(ident) => ident.node.name.clone(),
+            Expression::Constant(cst) => match &cst.node {
+                Constant::Integer(int) => match &int.base {
+                    IntegerBase::Decimal => {
+                        let str_slice: &str = &int.number;
+                        str_slice.parse::<i32>().expect("error").to_string()
+                    }
+                    IntegerBase::Octal => {
+                        let str_slice: &str = &int.number;
+                        format!("{:X}", str_slice.parse::<i32>().expect("error"))
+                    }
+                    IntegerBase::Hexadecimal => {
+                        let str_slice: &str = &int.number;
+                        format!("{:o}", str_slice.parse::<i32>().expect("error"))
+                    }
+                    IntegerBase::Binary => {
+                        let str_slice: &str = &int.number;
+                        format!("{:b}", str_slice.parse::<i32>().expect("error"))
+                    }
+                },
+                Constant::Float(float) => match &float.base {
+                    FloatBase::Decimal => {
+                        let str_slice: &str = &float.number;
+                        str_slice.parse::<f64>().expect("error").to_string()
+                    }
+                    FloatBase::Hexadecimal => {
+                        let str_slice: &str = &float.number;
+                        let float_value = str_slice.parse::<f64>().expect("error");
+                        let integer_part = float_value.floor() as i64;
+                        let fractional_part = float_value - integer_part as f64;
+                        let hex_integer_part = format!("{:X}", integer_part);
+                        let fractional_part_hex = (fractional_part * 1_000_000.0).round() as i64;
+                        let hex_fractional_part = format!("{:X}", fractional_part_hex);
+                        format!("{}.{}", hex_integer_part, hex_fractional_part)
+                    }
+                },
+                Constant::Character(_) => todo!(),
+            },
+            Expression::StringLiteral(_) => todo!(),
+            Expression::GenericSelection(_) => todo!(),
+            Expression::Member(_) => todo!(),
+            Expression::Call(_) => todo!(),
+            Expression::CompoundLiteral(_) => todo!(),
+            Expression::SizeOfTy(_) => todo!(),
+            Expression::SizeOfVal(_) => todo!(),
+            Expression::AlignOf(_) => todo!(),
+            Expression::UnaryOperator(_) => todo!(),
+            Expression::Cast(_) => todo!(),
+            Expression::BinaryOperator(_) => todo!(),
+            Expression::Conditional(_) => todo!(),
+            Expression::Comma(_) => todo!(),
+            Expression::OffsetOf(_) => todo!(),
+            Expression::VaArg(_) => todo!(),
+            Expression::Statement(_) => todo!(),
+        };
+        s.push(' ');
+        s.push_str(str.as_str());
+        s
     }
 }
 
@@ -61,38 +120,19 @@ impl WriteString for Declaration {
     fn write_string(&self) -> String {
         let mut s: String = String::new();
         for v in &self.specifiers {
-            match v.node.clone() {
-                DeclarationSpecifier::Alignment(_) => todo!(),
-                DeclarationSpecifier::StorageClass(_) => todo!(),
-                DeclarationSpecifier::TypeSpecifier(spec) => {
-                    s.push_str(
-                        match spec.node {
-                            TypeSpecifier::Void => "void".to_string(),
-                            TypeSpecifier::Char => "char".to_string(),
-                            TypeSpecifier::Short => "short".to_string(),
-                            TypeSpecifier::Int => "int".to_string(),
-                            TypeSpecifier::Long => "long".to_string(),
-                            TypeSpecifier::Float => "float".to_string(),
-                            TypeSpecifier::Double => "double".to_string(),
-                            TypeSpecifier::Signed => "signed".to_string(),
-                            TypeSpecifier::Unsigned => "unsigned".to_string(),
-                            TypeSpecifier::Bool => "_Bool".to_string(),
-                            TypeSpecifier::Complex => "_Complex".to_string(),
-                            TypeSpecifier::Atomic(_) => "atomic".to_string(),
-                            TypeSpecifier::Struct(_) => "struct".to_string(),
-                            TypeSpecifier::Enum(_) => "enum".to_string(),
-                            TypeSpecifier::TypedefName(_) => "typedef name".to_string(),
-                            TypeSpecifier::TypeOf(_) => "typeof".to_string(),
-                            TypeSpecifier::TS18661Float(_) => "TS18661 float".to_string(),
-                        }
-                        .as_str(),
-                    );
-                }
-                DeclarationSpecifier::TypeQualifier(_) => todo!(),
-                DeclarationSpecifier::Function(_) => todo!(),
-                DeclarationSpecifier::Extension(_) => todo!(),
-            }
+            s.push_str(v.node.write_string().as_str());
+        }
+        for v in &self.declarators {
             s.push(' ');
+            s.push_str(v.node.declarator.write_string().as_str());
+            let p = match &v.node.initializer {
+                Some(init) => match &init.node {
+                    Initializer::Expression(exp) => exp.write_string(),
+                    Initializer::List(_) => todo!(),
+                },
+                None => "".to_string(),
+            };
+            s.push_str(p.as_str());
         }
         s
     }
@@ -118,13 +158,44 @@ impl WriteString for Label {
 
 impl WriteString for DeclarationSpecifier {
     fn write_string(&self) -> String {
-        "DeclarationSpecifier".to_string()
+        match self {
+            DeclarationSpecifier::Alignment(_) => todo!(),
+            DeclarationSpecifier::StorageClass(_) => todo!(),
+            DeclarationSpecifier::TypeSpecifier(spec) => match spec.node {
+                TypeSpecifier::Void => "void".to_string(),
+                TypeSpecifier::Char => "char".to_string(),
+                TypeSpecifier::Short => "short".to_string(),
+                TypeSpecifier::Int => "int".to_string(),
+                TypeSpecifier::Long => "long".to_string(),
+                TypeSpecifier::Float => "float".to_string(),
+                TypeSpecifier::Double => "double".to_string(),
+                TypeSpecifier::Signed => "signed".to_string(),
+                TypeSpecifier::Unsigned => "unsigned".to_string(),
+                TypeSpecifier::Bool => "_Bool".to_string(),
+                TypeSpecifier::Complex => "_Complex".to_string(),
+                TypeSpecifier::Atomic(_) => "atomic".to_string(),
+                TypeSpecifier::Struct(_) => "struct".to_string(),
+                TypeSpecifier::Enum(_) => "enum".to_string(),
+                TypeSpecifier::TypedefName(_) => "typedef name".to_string(),
+                TypeSpecifier::TypeOf(_) => "typeof".to_string(),
+                TypeSpecifier::TS18661Float(_) => "TS18661 float".to_string(),
+            },
+            DeclarationSpecifier::TypeQualifier(_) => todo!(),
+            DeclarationSpecifier::Function(_) => todo!(),
+            DeclarationSpecifier::Extension(_) => todo!(),
+        }
     }
 }
 
 impl WriteString for Declarator {
     fn write_string(&self) -> String {
-        "Declarator".to_string()
+        let mut s = match &self.kind.node {
+            DeclaratorKind::Abstract => "".to_string(),
+            DeclaratorKind::Identifier(ident) => ident.node.name.clone(),
+            DeclaratorKind::Declarator(decl) => decl.write_string(),
+        };
+        s.push(' ');
+        s
     }
 }
 impl WriteString for Identifier {
