@@ -42,26 +42,25 @@ impl<T: WriteString> WriteString for Option<T> {
 
 impl WriteString for Expression {
     fn write_string(&self) -> String {
-        let mut s: String = "=".to_string();
-        let str = match self {
+        match self {
             Expression::Identifier(ident) => ident.node.name.clone(),
             Expression::Constant(cst) => match &cst.node {
                 Constant::Integer(int) => match &int.base {
                     IntegerBase::Decimal => {
                         let str_slice: &str = &int.number;
-                        str_slice.parse::<i32>().expect("error").to_string()
+                        str_slice.parse::<i64>().expect("error").to_string()
                     }
                     IntegerBase::Octal => {
                         let str_slice: &str = &int.number;
-                        format!("{:X}", str_slice.parse::<i32>().expect("error"))
+                        format!("{:X}", str_slice.parse::<i64>().expect("error"))
                     }
                     IntegerBase::Hexadecimal => {
                         let str_slice: &str = &int.number;
-                        format!("{:o}", str_slice.parse::<i32>().expect("error"))
+                        format!("{:o}", str_slice.parse::<i64>().expect("error"))
                     }
                     IntegerBase::Binary => {
                         let str_slice: &str = &int.number;
-                        format!("{:b}", str_slice.parse::<i32>().expect("error"))
+                        format!("{:b}", str_slice.parse::<i64>().expect("error"))
                     }
                 },
                 Constant::Float(float) => match &float.base {
@@ -80,28 +79,95 @@ impl WriteString for Expression {
                         format!("{}.{}", hex_integer_part, hex_fractional_part)
                     }
                 },
-                Constant::Character(_) => todo!(),
+                Constant::Character(str) => {
+                    format!("{}", str.as_str())
+                }
             },
             Expression::StringLiteral(_) => todo!(),
             Expression::GenericSelection(_) => todo!(),
             Expression::Member(_) => todo!(),
-            Expression::Call(_) => todo!(),
+            Expression::Call(exp) => {
+                let mut s: String = String::new();
+                s.push_str(exp.node.callee.write_string().as_str());
+                for v in &exp.node.arguments {
+                    s.push_str(&format!("({})", v.node.write_string().to_string()));
+                }
+                s
+            }
             Expression::CompoundLiteral(_) => todo!(),
             Expression::SizeOfTy(_) => todo!(),
             Expression::SizeOfVal(_) => todo!(),
             Expression::AlignOf(_) => todo!(),
             Expression::UnaryOperator(_) => todo!(),
             Expression::Cast(_) => todo!(),
-            Expression::BinaryOperator(_) => todo!(),
+            Expression::BinaryOperator(b_op) => match b_op.as_ref().node.operator.node {
+                BinaryOperator::Assign => {
+                    format!(
+                        "({} {})",
+                        b_op.node.lhs.node.write_string(),
+                        b_op.node.rhs.node.write_string()
+                    )
+                }
+                BinaryOperator::Index => todo!(),
+                BinaryOperator::Multiply => todo!(),
+                BinaryOperator::Divide => todo!(),
+                BinaryOperator::Modulo => {
+                    format!(
+                        "{} % {}",
+                        b_op.node.lhs.node.write_string(),
+                        b_op.node.rhs.node.write_string()
+                    )
+                }
+                BinaryOperator::Plus => {
+                    format!(
+                        "{} + {}",
+                        b_op.node.lhs.node.write_string(),
+                        b_op.node.rhs.node.write_string()
+                    )
+                }
+                BinaryOperator::Minus => {
+                    format!(
+                        "{} - {}",
+                        b_op.node.lhs.node.write_string(),
+                        b_op.node.rhs.node.write_string()
+                    )
+                }
+                BinaryOperator::ShiftLeft => todo!(),
+                BinaryOperator::ShiftRight => todo!(),
+                BinaryOperator::Less => {
+                    format!(
+                        "{} < {}",
+                        b_op.node.lhs.node.write_string(),
+                        b_op.node.rhs.node.write_string()
+                    )
+                }
+                BinaryOperator::Greater => todo!(),
+                BinaryOperator::LessOrEqual => todo!(),
+                BinaryOperator::GreaterOrEqual => todo!(),
+                BinaryOperator::Equals => todo!(),
+                BinaryOperator::NotEquals => todo!(),
+                BinaryOperator::BitwiseAnd => todo!(),
+                BinaryOperator::BitwiseXor => todo!(),
+                BinaryOperator::BitwiseOr => todo!(),
+                BinaryOperator::LogicalAnd => todo!(),
+                BinaryOperator::LogicalOr => todo!(),
+                BinaryOperator::AssignMultiply => todo!(),
+                BinaryOperator::AssignDivide => todo!(),
+                BinaryOperator::AssignModulo => todo!(),
+                BinaryOperator::AssignPlus => todo!(),
+                BinaryOperator::AssignMinus => todo!(),
+                BinaryOperator::AssignShiftLeft => todo!(),
+                BinaryOperator::AssignShiftRight => todo!(),
+                BinaryOperator::AssignBitwiseAnd => todo!(),
+                BinaryOperator::AssignBitwiseXor => todo!(),
+                BinaryOperator::AssignBitwiseOr => todo!(),
+            },
             Expression::Conditional(_) => todo!(),
             Expression::Comma(_) => todo!(),
             Expression::OffsetOf(_) => todo!(),
             Expression::VaArg(_) => todo!(),
             Expression::Statement(_) => todo!(),
-        };
-        s.push(' ');
-        s.push_str(str.as_str());
-        s
+        }
     }
 }
 
@@ -127,7 +193,7 @@ impl WriteString for Declaration {
             s.push_str(v.node.declarator.write_string().as_str());
             let p = match &v.node.initializer {
                 Some(init) => match &init.node {
-                    Initializer::Expression(exp) => exp.write_string(),
+                    Initializer::Expression(exp) => format!(" = {}", exp.write_string()),
                     Initializer::List(_) => todo!(),
                 },
                 None => "".to_string(),
@@ -181,20 +247,78 @@ impl WriteString for DeclarationSpecifier {
                 TypeSpecifier::TS18661Float(_) => "TS18661 float".to_string(),
             },
             DeclarationSpecifier::TypeQualifier(_) => todo!(),
-            DeclarationSpecifier::Function(_) => todo!(),
+            DeclarationSpecifier::Function(spec) => match spec.node {
+                FunctionSpecifier::Inline => "__inline__".to_string(),
+                FunctionSpecifier::Noreturn => "_Noreturn".to_string(),
+            },
             DeclarationSpecifier::Extension(_) => todo!(),
+        }
+    }
+}
+
+impl WriteString for PointerQualifier {
+    fn write_string(&self) -> String {
+        match self {
+            PointerQualifier::TypeQualifier(qlf) => match qlf.node {
+                TypeQualifier::Const => "const".to_string(),
+                TypeQualifier::Restrict => "restrict".to_string(),
+                TypeQualifier::Volatile => "volatile".to_string(),
+                TypeQualifier::Nonnull => "_Nonnull".to_string(),
+                TypeQualifier::NullUnspecified => "_Null_unspecified".to_string(),
+                TypeQualifier::Nullable => "_Nullable".to_string(),
+                TypeQualifier::Atomic => "_Atomic".to_string(),
+            },
+            PointerQualifier::Extension(_) => todo!(),
+        }
+    }
+}
+
+impl WriteString for DeclaratorKind {
+    fn write_string(&self) -> String {
+        match self {
+            DeclaratorKind::Abstract => "".to_string(),
+            DeclaratorKind::Identifier(ident) => ident.node.name.to_string(),
+            DeclaratorKind::Declarator(decl) => decl.node.write_string(),
         }
     }
 }
 
 impl WriteString for Declarator {
     fn write_string(&self) -> String {
-        let mut s = match &self.kind.node {
-            DeclaratorKind::Abstract => "".to_string(),
-            DeclaratorKind::Identifier(ident) => ident.node.name.clone(),
-            DeclaratorKind::Declarator(decl) => decl.write_string(),
-        };
-        s.push(' ');
+        let mut s = String::new();
+        s.push_str(self.kind.node.write_string().as_str());
+
+        for v in &self.derived {
+            let mut str: String = String::new();
+            match &v.node {
+                DerivedDeclarator::Pointer(qlf) => {
+                    for p in qlf {
+                        str.push_str(p.node.write_string().as_str())
+                    }
+                }
+                DerivedDeclarator::Array(_) => todo!(),
+                DerivedDeclarator::Function(decl) => {
+                    let mut v: String = String::new();
+                    for p in &decl.node.parameters {
+                        for vec in &p.node.specifiers {
+                            v.push_str(vec.node.write_string().as_str());
+                        }
+                        v.push(' ');
+                        v.push_str(p.node.declarator.write_string().as_str());
+                    }
+                    str.push_str(&format!("({})", v));
+                }
+                DerivedDeclarator::KRFunction(ident) => {
+                    let mut v: String = String::new();
+                    for p in ident {
+                        v.push_str(&p.node.name);
+                    }
+                    str.push_str(&format!("({})", v));
+                }
+                DerivedDeclarator::Block(_) => todo!(),
+            }
+            s.push_str(str.as_str());
+        }
         s
     }
 }
@@ -231,22 +355,16 @@ impl WriteLine for Declaration {
     }
 }
 
-impl WriteString for (&Vec<Node<DeclarationSpecifier>>, &Declarator) {
-    fn write_string(&self) -> String {
-        format!(
-            "{} {}",
-            self.0
-                .iter()
-                .map(|node| node.write_string())
-                .collect::<Vec<_>>()
-                .join(" "),
-            self.1.write_string()
-        )
-    }
-}
-
 impl WriteLine for FunctionDefinition {
     fn write_line(&self, indent: usize, write: &mut dyn Write) -> Result<()> {
+        let mut return_type: String = String::new();
+
+        for v in &self.specifiers {
+            return_type.push_str(v.node.write_string().as_str());
+        }
+
+        writeln!(write, "{} {}", return_type, self.declarator.write_string())?;
+        self.statement.write_line(indent, write)?;
         write_indent(indent, write)?;
         Ok(())
     }
@@ -277,7 +395,7 @@ impl WriteLine for Statement {
             Self::If(stmt) => {
                 write_indent(indent, write)?;
                 writeln!(write, "if ({})", stmt.node.condition.write_string())?;
-                stmt.node.then_statement.write_line(indent + 1, write)?;
+                stmt.node.then_statement.write_line(indent, write)?;
                 Ok(())
             }
             Self::Expression(exp) => {
@@ -293,7 +411,7 @@ impl WriteLine for Statement {
             }
             Self::While(stmt) => {
                 write_indent(indent, write)?;
-                writeln!(write, "switch ({})", stmt.node.expression.write_string())?;
+                writeln!(write, "while ({})", stmt.node.expression.write_string())?;
                 stmt.node.statement.write_line(indent + 1, write)?;
                 Ok(())
             }
@@ -332,7 +450,7 @@ impl WriteLine for Statement {
             }
             Self::Return(exp) => {
                 write_indent(indent, write)?;
-                writeln!(write, "{};", exp.as_ref().write_string())?;
+                writeln!(write, "return {};", exp.as_ref().write_string())?;
                 Ok(())
             }
             Self::Asm(_) => Ok(()),

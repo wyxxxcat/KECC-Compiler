@@ -1,1 +1,1 @@
-float c = 0.2;
+char c = 'c';
