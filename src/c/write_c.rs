@@ -40,6 +40,256 @@ impl<T: WriteString> WriteString for Option<T> {
     }
 }
 
+impl WriteString for BinaryOperatorExpression {
+    fn write_string(&self) -> String {
+        match self.operator.node {
+            BinaryOperator::Index => {
+                format!("{}[{}]", self.lhs.write_string(), self.rhs.write_string())
+            }
+            BinaryOperator::Multiply => {
+                format!(
+                    "({} * {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Divide => {
+                format!(
+                    "({} / {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Modulo => {
+                format!(
+                    "({} % {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Plus => {
+                format!(
+                    "({} + {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Minus => {
+                format!(
+                    "({} - {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::ShiftLeft => {
+                format!(
+                    "({} << {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::ShiftRight => {
+                format!(
+                    "({} >> {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Less => {
+                format!(
+                    "({} < {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Greater => {
+                format!(
+                    "({} > {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::LessOrEqual => {
+                format!(
+                    "({} <= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::GreaterOrEqual => {
+                format!(
+                    "({} >= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Equals => {
+                format!(
+                    "({} == {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::NotEquals => {
+                format!(
+                    "({} != {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::BitwiseAnd => {
+                format!(
+                    "({} & {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::BitwiseXor => {
+                format!(
+                    "({} ^ {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::BitwiseOr => {
+                format!(
+                    "({} | {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::LogicalAnd => {
+                format!(
+                    "({} && {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::LogicalOr => {
+                format!(
+                    "({} || {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::Assign => {
+                format!(
+                    "({} = {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignMultiply => {
+                format!(
+                    "({} *= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignDivide => {
+                format!(
+                    "({} /= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignModulo => {
+                format!(
+                    "({} %= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignPlus => {
+                format!(
+                    "({} += {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignMinus => {
+                format!(
+                    "({}-+= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignShiftLeft => {
+                format!(
+                    "({} <<= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignShiftRight => {
+                format!(
+                    "({} >>= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignBitwiseAnd => {
+                format!(
+                    "({} &= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignBitwiseXor => {
+                format!(
+                    "({} ^= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+            BinaryOperator::AssignBitwiseOr => {
+                format!(
+                    "({} |= {})",
+                    self.lhs.write_string(),
+                    self.rhs.write_string()
+                )
+            }
+        }
+    }
+}
+
+impl WriteString for UnaryOperatorExpression {
+    fn write_string(&self) -> String {
+        match self.operator.node {
+            UnaryOperator::PostIncrement => {
+                format!("{}++", self.operand.write_string())
+            }
+            UnaryOperator::PostDecrement => {
+                format!("{}--", self.operand.write_string())
+            }
+            UnaryOperator::PreIncrement => {
+                format!("++({})", self.operand.write_string())
+            }
+            UnaryOperator::PreDecrement => {
+                format!("--({})", self.operand.write_string())
+            }
+            UnaryOperator::Address => {
+                format!("&({})", self.operand.write_string())
+            }
+            UnaryOperator::Indirection => {
+                format!("*({})", self.operand.write_string())
+            }
+            UnaryOperator::Plus => {
+                format!("+{}", self.operand.write_string())
+            }
+            UnaryOperator::Minus => {
+                format!("-{}", self.operand.write_string())
+            }
+            UnaryOperator::Complement => {
+                format!("~{}", self.operand.write_string())
+            }
+            UnaryOperator::Negate => {
+                format!("!{}", self.operand.write_string())
+            }
+        }
+    }
+}
+
 impl WriteString for Expression {
     fn write_string(&self) -> String {
         match self {
@@ -87,81 +337,21 @@ impl WriteString for Expression {
             Expression::GenericSelection(_) => todo!(),
             Expression::Member(_) => todo!(),
             Expression::Call(exp) => {
-                let mut s: String = String::new();
-                s.push_str(exp.node.callee.write_string().as_str());
+                let mut s: Vec<String> = Vec::new();
                 for v in &exp.node.arguments {
-                    s.push_str(&format!("({})", v.node.write_string().to_string()));
+                    s.push(v.node.write_string());
                 }
-                s
+                format!("{}({})", exp.node.callee.write_string(), s.join(","))
             }
             Expression::CompoundLiteral(_) => todo!(),
             Expression::SizeOfTy(_) => todo!(),
             Expression::SizeOfVal(_) => todo!(),
-            Expression::AlignOf(_) => todo!(),
-            Expression::UnaryOperator(_) => todo!(),
+            Expression::AlignOf(ali) => {
+                format!("_Alignof({})", ali.node.0.node.write_string())
+            }
+            Expression::UnaryOperator(u_op) => u_op.node.write_string(),
             Expression::Cast(_) => todo!(),
-            Expression::BinaryOperator(b_op) => match b_op.as_ref().node.operator.node {
-                BinaryOperator::Assign => {
-                    format!(
-                        "({} {})",
-                        b_op.node.lhs.node.write_string(),
-                        b_op.node.rhs.node.write_string()
-                    )
-                }
-                BinaryOperator::Index => todo!(),
-                BinaryOperator::Multiply => todo!(),
-                BinaryOperator::Divide => todo!(),
-                BinaryOperator::Modulo => {
-                    format!(
-                        "{} % {}",
-                        b_op.node.lhs.node.write_string(),
-                        b_op.node.rhs.node.write_string()
-                    )
-                }
-                BinaryOperator::Plus => {
-                    format!(
-                        "{} + {}",
-                        b_op.node.lhs.node.write_string(),
-                        b_op.node.rhs.node.write_string()
-                    )
-                }
-                BinaryOperator::Minus => {
-                    format!(
-                        "{} - {}",
-                        b_op.node.lhs.node.write_string(),
-                        b_op.node.rhs.node.write_string()
-                    )
-                }
-                BinaryOperator::ShiftLeft => todo!(),
-                BinaryOperator::ShiftRight => todo!(),
-                BinaryOperator::Less => {
-                    format!(
-                        "{} < {}",
-                        b_op.node.lhs.node.write_string(),
-                        b_op.node.rhs.node.write_string()
-                    )
-                }
-                BinaryOperator::Greater => todo!(),
-                BinaryOperator::LessOrEqual => todo!(),
-                BinaryOperator::GreaterOrEqual => todo!(),
-                BinaryOperator::Equals => todo!(),
-                BinaryOperator::NotEquals => todo!(),
-                BinaryOperator::BitwiseAnd => todo!(),
-                BinaryOperator::BitwiseXor => todo!(),
-                BinaryOperator::BitwiseOr => todo!(),
-                BinaryOperator::LogicalAnd => todo!(),
-                BinaryOperator::LogicalOr => todo!(),
-                BinaryOperator::AssignMultiply => todo!(),
-                BinaryOperator::AssignDivide => todo!(),
-                BinaryOperator::AssignModulo => todo!(),
-                BinaryOperator::AssignPlus => todo!(),
-                BinaryOperator::AssignMinus => todo!(),
-                BinaryOperator::AssignShiftLeft => todo!(),
-                BinaryOperator::AssignShiftRight => todo!(),
-                BinaryOperator::AssignBitwiseAnd => todo!(),
-                BinaryOperator::AssignBitwiseXor => todo!(),
-                BinaryOperator::AssignBitwiseOr => todo!(),
-            },
+            Expression::BinaryOperator(b_op) => b_op.node.write_string(),
             Expression::Conditional(_) => todo!(),
             Expression::Comma(_) => todo!(),
             Expression::OffsetOf(_) => todo!(),
@@ -182,6 +372,55 @@ impl WriteLine for TranslationUnit {
     }
 }
 
+impl WriteString for SpecifierQualifier {
+    fn write_string(&self) -> String {
+        match self {
+            SpecifierQualifier::TypeSpecifier(spec) => spec.node.write_string(),
+            SpecifierQualifier::TypeQualifier(spec) => spec.node.write_string(),
+            SpecifierQualifier::Extension(_) => todo!(),
+        }
+    }
+}
+
+impl WriteString for TypeName {
+    fn write_string(&self) -> String {
+        let mut s: String = String::new();
+        for v in &self.specifiers {
+            s.push_str(v.node.write_string().as_str());
+            s.push(' ');
+        }
+        s = s.trim().to_string();
+        format!("{}{}", s, self.declarator.write_string())
+    }
+}
+
+impl WriteString for Designator {
+    fn write_string(&self) -> String {
+        match self {
+            Designator::Index(exp) => exp.node.write_string(),
+            Designator::Member(ident) => ident.node.name.clone(),
+            Designator::Range(range) => {
+                format!(
+                    "{} {}",
+                    range.node.from.node.write_string(),
+                    range.node.to.node.write_string()
+                )
+            }
+        }
+    }
+}
+
+impl WriteString for InitializerListItem {
+    fn write_string(&self) -> String {
+        let mut s: String = String::new();
+        for v in &self.designation {
+            s.push_str(v.node.write_string().as_str());
+        }
+        s.push_str(self.initializer.node.write_string().as_str());
+        s
+    }
+}
+
 impl WriteString for Declaration {
     fn write_string(&self) -> String {
         let mut s: String = String::new();
@@ -194,7 +433,14 @@ impl WriteString for Declaration {
             let p = match &v.node.initializer {
                 Some(init) => match &init.node {
                     Initializer::Expression(exp) => format!(" = {}", exp.write_string()),
-                    Initializer::List(_) => todo!(),
+                    Initializer::List(list) => {
+                        let mut s: Vec<String> = Vec::new();
+
+                        for v in list {
+                            s.push(v.node.write_string());
+                        }
+                        format!(" = {{{}}}", s.join(", "))
+                    }
                 },
                 None => "".to_string(),
             };
@@ -204,15 +450,45 @@ impl WriteString for Declaration {
     }
 }
 
+impl WriteString for StaticAssert {
+    fn write_string(&self) -> String {
+        let mut s: String = self.expression.node.write_string();
+        for v in &self.message.node {
+            s.push_str(v);
+        }
+        s
+    }
+}
+
 impl WriteString for ForInitializer {
     fn write_string(&self) -> String {
-        "ForInitializer".to_string()
+        match self {
+            ForInitializer::Empty => "".to_string(),
+            ForInitializer::Expression(exp) => {
+                format!("{}", exp.write_string())
+            }
+            ForInitializer::Declaration(exp) => {
+                format!("{}", exp.write_string())
+            }
+            ForInitializer::StaticAssert(exp) => {
+                format!("_StaticAssert({})", exp.write_string())
+            }
+        }
     }
 }
 
 impl WriteString for Initializer {
     fn write_string(&self) -> String {
-        "Initializer".to_string()
+        match self {
+            Initializer::Expression(exp) => exp.write_string(),
+            Initializer::List(list) => {
+                let mut s: String = String::new();
+                for p in list {
+                    s.push_str(p.node.write_string().as_str());
+                }
+                s
+            }
+        }
     }
 }
 
@@ -227,26 +503,8 @@ impl WriteString for DeclarationSpecifier {
         match self {
             DeclarationSpecifier::Alignment(_) => todo!(),
             DeclarationSpecifier::StorageClass(_) => todo!(),
-            DeclarationSpecifier::TypeSpecifier(spec) => match spec.node {
-                TypeSpecifier::Void => "void".to_string(),
-                TypeSpecifier::Char => "char".to_string(),
-                TypeSpecifier::Short => "short".to_string(),
-                TypeSpecifier::Int => "int".to_string(),
-                TypeSpecifier::Long => "long".to_string(),
-                TypeSpecifier::Float => "float".to_string(),
-                TypeSpecifier::Double => "double".to_string(),
-                TypeSpecifier::Signed => "signed".to_string(),
-                TypeSpecifier::Unsigned => "unsigned".to_string(),
-                TypeSpecifier::Bool => "_Bool".to_string(),
-                TypeSpecifier::Complex => "_Complex".to_string(),
-                TypeSpecifier::Atomic(_) => "atomic".to_string(),
-                TypeSpecifier::Struct(_) => "struct".to_string(),
-                TypeSpecifier::Enum(_) => "enum".to_string(),
-                TypeSpecifier::TypedefName(_) => "typedef name".to_string(),
-                TypeSpecifier::TypeOf(_) => "typeof".to_string(),
-                TypeSpecifier::TS18661Float(_) => "TS18661 float".to_string(),
-            },
-            DeclarationSpecifier::TypeQualifier(_) => todo!(),
+            DeclarationSpecifier::TypeSpecifier(spec) => spec.node.write_string(),
+            DeclarationSpecifier::TypeQualifier(qlf) => qlf.node.write_string(),
             DeclarationSpecifier::Function(spec) => match spec.node {
                 FunctionSpecifier::Inline => "__inline__".to_string(),
                 FunctionSpecifier::Noreturn => "_Noreturn".to_string(),
@@ -256,19 +514,40 @@ impl WriteString for DeclarationSpecifier {
     }
 }
 
-impl WriteString for PointerQualifier {
+impl WriteString for TypeSpecifier {
     fn write_string(&self) -> String {
         match self {
-            PointerQualifier::TypeQualifier(qlf) => match qlf.node {
-                TypeQualifier::Const => "const".to_string(),
-                TypeQualifier::Restrict => "restrict".to_string(),
-                TypeQualifier::Volatile => "volatile".to_string(),
-                TypeQualifier::Nonnull => "_Nonnull".to_string(),
-                TypeQualifier::NullUnspecified => "_Null_unspecified".to_string(),
-                TypeQualifier::Nullable => "_Nullable".to_string(),
-                TypeQualifier::Atomic => "_Atomic".to_string(),
-            },
-            PointerQualifier::Extension(_) => todo!(),
+            TypeSpecifier::Void => "void".to_string(),
+            TypeSpecifier::Char => "char".to_string(),
+            TypeSpecifier::Short => "short".to_string(),
+            TypeSpecifier::Int => "int".to_string(),
+            TypeSpecifier::Long => "long".to_string(),
+            TypeSpecifier::Float => "float".to_string(),
+            TypeSpecifier::Double => "double".to_string(),
+            TypeSpecifier::Signed => "signed".to_string(),
+            TypeSpecifier::Unsigned => "unsigned".to_string(),
+            TypeSpecifier::Bool => "_Bool".to_string(),
+            TypeSpecifier::Complex => "_Complex".to_string(),
+            TypeSpecifier::Atomic(_) => "atomic".to_string(),
+            TypeSpecifier::Struct(_) => "struct".to_string(),
+            TypeSpecifier::Enum(_) => "enum".to_string(),
+            TypeSpecifier::TypedefName(_) => "typedef name".to_string(),
+            TypeSpecifier::TypeOf(_) => "typeof".to_string(),
+            TypeSpecifier::TS18661Float(_) => "TS18661 float".to_string(),
+        }
+    }
+}
+
+impl WriteString for TypeQualifier {
+    fn write_string(&self) -> String {
+        match self {
+            TypeQualifier::Const => "const".to_string(),
+            TypeQualifier::Restrict => "restrict".to_string(),
+            TypeQualifier::Volatile => "volatile".to_string(),
+            TypeQualifier::Nonnull => "_Nonnull".to_string(),
+            TypeQualifier::NullUnspecified => "_Null_unspecified".to_string(),
+            TypeQualifier::Nullable => "_Nullable".to_string(),
+            TypeQualifier::Atomic => "_Atomic".to_string(),
         }
     }
 }
@@ -282,31 +561,70 @@ impl WriteString for DeclaratorKind {
         }
     }
 }
+impl WriteString for PointerQualifier {
+    fn write_string(&self) -> String {
+        match self {
+            PointerQualifier::TypeQualifier(qls) => qls.node.write_string(),
+            PointerQualifier::Extension(_) => todo!(),
+        }
+    }
+}
+
+impl WriteString for ArraySize {
+    fn write_string(&self) -> String {
+        match self {
+            ArraySize::Unknown => {
+                format!("[]")
+            }
+            ArraySize::VariableUnknown => {
+                format!("[*]")
+            }
+            ArraySize::VariableExpression(exp) => {
+                format!("[{}]", exp.node.write_string())
+            }
+            ArraySize::StaticExpression(exp) => {
+                format!("[static {}]", exp.node.write_string())
+            }
+        }
+    }
+}
 
 impl WriteString for Declarator {
     fn write_string(&self) -> String {
         let mut s = String::new();
-        s.push_str(self.kind.node.write_string().as_str());
+        let mut str: String = String::new();
 
         for v in &self.derived {
-            let mut str: String = String::new();
             match &v.node {
                 DerivedDeclarator::Pointer(qlf) => {
+                    s.push('*');
                     for p in qlf {
                         str.push_str(p.node.write_string().as_str())
                     }
                 }
-                DerivedDeclarator::Array(_) => todo!(),
-                DerivedDeclarator::Function(decl) => {
+                DerivedDeclarator::Array(decl) => {
                     let mut v: String = String::new();
+                    for p in &decl.node.qualifiers {
+                        v.push_str(p.node.write_string().as_str());
+                    }
+                    str.push_str(&format!("{}{}", v, decl.node.size.write_string()));
+                }
+                DerivedDeclarator::Function(decl) => {
+                    let mut vec: Vec<String> = Vec::new();
                     for p in &decl.node.parameters {
+                        let mut v: String = String::new();
+
                         for vec in &p.node.specifiers {
                             v.push_str(vec.node.write_string().as_str());
                         }
-                        v.push(' ');
-                        v.push_str(p.node.declarator.write_string().as_str());
+                        vec.push(format!(
+                            "{} {}",
+                            v,
+                            p.node.declarator.write_string().as_str()
+                        ));
                     }
-                    str.push_str(&format!("({})", v));
+
+                    str.push_str(&format!("({})", vec.join(",")));
                 }
                 DerivedDeclarator::KRFunction(ident) => {
                     let mut v: String = String::new();
@@ -317,8 +635,10 @@ impl WriteString for Declarator {
                 }
                 DerivedDeclarator::Block(_) => todo!(),
             }
-            s.push_str(str.as_str());
         }
+        s.push_str(self.kind.node.write_string().as_str());
+        s.push_str(str.as_str());
+
         s
     }
 }
@@ -396,11 +716,17 @@ impl WriteLine for Statement {
                 write_indent(indent, write)?;
                 writeln!(write, "if ({})", stmt.node.condition.write_string())?;
                 stmt.node.then_statement.write_line(indent, write)?;
+                if let Some(els) = &stmt.node.else_statement {
+                    write_indent(indent, write)?;
+                    writeln!(write, "else ")?;
+                    els.node.write_line(indent, write)?;
+                }
+
                 Ok(())
             }
             Self::Expression(exp) => {
                 write_indent(indent, write)?;
-                writeln!(write, "Expression ({})", exp.as_ref().write_string())?;
+                writeln!(write, "{};", exp.as_ref().write_string())?;
                 Ok(())
             }
             Self::Switch(stmt) => {
