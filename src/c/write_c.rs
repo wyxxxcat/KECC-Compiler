@@ -47,95 +47,43 @@ impl WriteString for BinaryOperatorExpression {
                 format!("{}[{}]", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Multiply => {
-                format!(
-                    "({} * {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} * {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Divide => {
-                format!(
-                    "({} / {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} / {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Modulo => {
-                format!(
-                    "({} % {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} % {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Plus => {
-                format!(
-                    "({} + {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} + {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Minus => {
-                format!(
-                    "({} - {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} - {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::ShiftLeft => {
-                format!(
-                    "({} << {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} << {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::ShiftRight => {
-                format!(
-                    "({} >> {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} >> {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Less => {
-                format!(
-                    "({} < {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} < {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Greater => {
-                format!(
-                    "({} > {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} > {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::LessOrEqual => {
-                format!(
-                    "({} <= {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} <= {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::GreaterOrEqual => {
-                format!(
-                    "({} >= {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} >= {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::Equals => {
-                format!(
-                    "({} == {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} == {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::NotEquals => {
-                format!(
-                    "({} != {})",
-                    self.lhs.write_string(),
-                    self.rhs.write_string()
-                )
+                format!("{} != {}", self.lhs.write_string(), self.rhs.write_string())
             }
             BinaryOperator::BitwiseAnd => {
                 format!(
@@ -209,7 +157,7 @@ impl WriteString for BinaryOperatorExpression {
             }
             BinaryOperator::AssignMinus => {
                 format!(
-                    "({}-+= {})",
+                    "({} -= {})",
                     self.lhs.write_string(),
                     self.rhs.write_string()
                 )
@@ -295,24 +243,35 @@ impl WriteString for Expression {
         match self {
             Expression::Identifier(ident) => ident.node.name.clone(),
             Expression::Constant(cst) => match &cst.node {
-                Constant::Integer(int) => match &int.base {
-                    IntegerBase::Decimal => {
-                        let str_slice: &str = &int.number;
-                        str_slice.parse::<i64>().expect("error").to_string()
+                Constant::Integer(it) => {
+                    let s: String = match &it.base {
+                        IntegerBase::Decimal => {
+                            let str_slice: &str = &it.number;
+                            format!("{}", str_slice)
+                        }
+                        IntegerBase::Octal => {
+                            let str_slice: &str = &it.number;
+                            format!("{}", str_slice)
+                        }
+                        IntegerBase::Hexadecimal => {
+                            let str_slice: &str = &it.number;
+                            format!("0x{}", str_slice)
+                        }
+                        IntegerBase::Binary => {
+                            let str_slice: &str = &it.number;
+                            format!("{}", str_slice)
+                        }
+                    };
+                    match &it.suffix.size {
+                        IntegerSize::Int => s,
+                        IntegerSize::Long => {
+                            format!("{}L", s)
+                        }
+                        IntegerSize::LongLong => {
+                            format!("{}LL", s)
+                        }
                     }
-                    IntegerBase::Octal => {
-                        let str_slice: &str = &int.number;
-                        format!("{:X}", str_slice.parse::<i64>().expect("error"))
-                    }
-                    IntegerBase::Hexadecimal => {
-                        let str_slice: &str = &int.number;
-                        format!("{:o}", str_slice.parse::<i64>().expect("error"))
-                    }
-                    IntegerBase::Binary => {
-                        let str_slice: &str = &int.number;
-                        format!("{:b}", str_slice.parse::<i64>().expect("error"))
-                    }
-                },
+                }
                 Constant::Float(float) => match &float.base {
                     FloatBase::Decimal => {
                         let str_slice: &str = &float.number;
@@ -335,7 +294,16 @@ impl WriteString for Expression {
             },
             Expression::StringLiteral(_) => todo!(),
             Expression::GenericSelection(_) => todo!(),
-            Expression::Member(_) => todo!(),
+            Expression::Member(mem) => match mem.node.operator.node {
+                MemberOperator::Direct => {
+                    format!(
+                        "{}.{}",
+                        mem.node.expression.node.write_string(),
+                        mem.node.identifier.node.name
+                    )
+                }
+                MemberOperator::Indirect => todo!(),
+            },
             Expression::Call(exp) => {
                 let mut s: Vec<String> = Vec::new();
                 for v in &exp.node.arguments {
@@ -350,10 +318,30 @@ impl WriteString for Expression {
                 format!("_Alignof({})", ali.node.0.node.write_string())
             }
             Expression::UnaryOperator(u_op) => u_op.node.write_string(),
-            Expression::Cast(_) => todo!(),
+            Expression::Cast(cast) => {
+                format!(
+                    "({}){}",
+                    cast.node.type_name.node.write_string(),
+                    cast.node.expression.node.write_string()
+                )
+            }
             Expression::BinaryOperator(b_op) => b_op.node.write_string(),
-            Expression::Conditional(_) => todo!(),
-            Expression::Comma(_) => todo!(),
+            Expression::Conditional(cond) => {
+                format!(
+                    "({} ? {} : {})",
+                    cond.node.condition.node.write_string(),
+                    cond.node.then_expression.node.write_string(),
+                    cond.node.else_expression.node.write_string()
+                )
+            }
+            Expression::Comma(exp) => {
+                let mut s: Vec<String> = Vec::new();
+                let vec: &Vec<Node<Expression>> = &*exp;
+                for p in vec {
+                    s.push(p.node.write_string());
+                }
+                format!("({})", s.join(", "))
+            }
             Expression::OffsetOf(_) => todo!(),
             Expression::VaArg(_) => todo!(),
             Expression::Statement(_) => todo!(),
@@ -426,7 +414,9 @@ impl WriteString for Declaration {
         let mut s: String = String::new();
         for v in &self.specifiers {
             s.push_str(v.node.write_string().as_str());
+            s.push(' ');
         }
+        s = s.trim().to_string();
         for v in &self.declarators {
             s.push(' ');
             s.push_str(v.node.declarator.write_string().as_str());
@@ -529,7 +519,36 @@ impl WriteString for TypeSpecifier {
             TypeSpecifier::Bool => "_Bool".to_string(),
             TypeSpecifier::Complex => "_Complex".to_string(),
             TypeSpecifier::Atomic(_) => "atomic".to_string(),
-            TypeSpecifier::Struct(_) => "struct".to_string(),
+            TypeSpecifier::Struct(struct_) => {
+                // struct todo! how to deal with indent of problem
+                let mut s: String = match struct_.node.kind.node {
+                    StructKind::Struct => "struct".to_string(),
+                    StructKind::Union => "union".to_string(),
+                };
+                if let Some(ident) = &struct_.node.identifier {
+                    s = format!("{} {}", s, ident.node.name);
+                }
+                if let Some(declaration) = &struct_.node.declarations {
+                    for p in declaration {
+                        match &p.node {
+                            StructDeclaration::Field(field) => {
+                                let mut str: String = String::new();
+                                for v in &field.node.specifiers {
+                                    str.push_str(v.node.write_string().as_str());
+                                }
+                                for v in &field.node.declarators {
+                                    if let Some(declarator) = &v.node.declarator {
+                                        str.push_str(declarator.node.write_string().as_str());
+                                    }
+                                }
+                                s = format!("{{{}}}", str);
+                            }
+                            StructDeclaration::StaticAssert(_) => todo!(),
+                        }
+                    }
+                }
+                s
+            }
             TypeSpecifier::Enum(_) => "enum".to_string(),
             TypeSpecifier::TypedefName(_) => "typedef name".to_string(),
             TypeSpecifier::TypeOf(_) => "typeof".to_string(),
@@ -616,7 +635,9 @@ impl WriteString for Declarator {
 
                         for vec in &p.node.specifiers {
                             v.push_str(vec.node.write_string().as_str());
+                            v.push(' ');
                         }
+                        v = v.trim().to_string();
                         vec.push(format!(
                             "{} {}",
                             v,
